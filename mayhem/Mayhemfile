@@ -1,0 +1,15 @@
+# sv-parser in-process libFuzzer target (cargo-fuzz / libfuzzer-sys).
+# Feeds fuzzer bytes as SystemVerilog source into sv_parser::parse_sv_str.
+project: mayhemheroes/sv-parser
+target: parse-sv
+image: mayhemheroes/sv-parser:latest
+
+cmds:
+  - cmd: /mayhem/parse_sv
+    libfuzzer: true
+
+# Benign local seed corpus (real SystemVerilog snippets that parse cleanly) so the
+# regression smoketest has inputs to replay (SPEC §9). A pure -runs=0 replay exits 0.
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/parse-sv/testsuite

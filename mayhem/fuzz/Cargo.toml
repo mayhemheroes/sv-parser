@@ -1,0 +1,30 @@
+[package]
+name = "sv-parser-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2018"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+# sv-parser IS a library crate, so the harness depends on it as a path dependency
+# and drives its public parse API (the SAME entrypoint the crate exposes). Upstream
+# source is untouched; this additive fuzz crate only CALLS it.
+[dependencies.sv-parser]
+path = "../../sv-parser"
+
+# Standalone fuzz crate — not part of the parent sv-parser workspace.
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "parse_sv"
+path = "fuzz_targets/parse_sv.rs"
+test = false
+doc = false
